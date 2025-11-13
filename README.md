@@ -1,103 +1,208 @@
 # Social Security Benefits Calculator
 
-A Docker-based web application for calculating optimal Social Security claiming strategies.
+A modern full-stack web application for calculating optimal Social Security claiming strategies, built with Next.js 14, TypeScript, and SQLite.
+
+## Technology Stack
+
+### Core Framework
+- **Next.js 14+** (App Router) - Full-stack React framework
+- **TypeScript** - Type-safe development
+- **React 18** - UI library with Server and Client Components
+
+### Database
+- **SQLite** - File-based, zero-config database
+- **Drizzle ORM** - Type-safe database queries and migrations
+
+### UI/Styling
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Beautiful, customizable React components
+- **Recharts** - Financial charts and visualizations
+
+### Development & Deployment
+- **Docker** - Containerized deployment
+- **ESLint & Prettier** - Code quality and formatting
+- **Hot Reload** - Built into Next.js
 
 ## Project Structure
 
 ```
 .
-├── backend/              # Node.js/Express API
-├── frontend/             # React application
-├── docker-compose.yml    # Development environment
-├── docker-compose.prod.yml # Production environment
-└── package.json          # Root scripts for Docker commands
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/               # API routes
+│   │   ├── layout.tsx         # Root layout
+│   │   ├── page.tsx           # Home page
+│   │   └── globals.css        # Global styles
+│   ├── components/            # React components
+│   │   └── ui/                # shadcn/ui components
+│   ├── lib/                   # Utility libraries
+│   │   ├── services/          # Business logic services
+│   │   ├── config/            # Configuration
+│   │   └── utils.ts           # Utility functions
+│   ├── db/                    # Database
+│   │   ├── schema.ts          # Drizzle schema
+│   │   ├── db.ts              # Database connection
+│   │   └── migrations/        # Database migrations
+│   └── types/                 # TypeScript types
+├── data/                      # SQLite database (gitignored)
+├── Dockerfile                 # Multi-stage Docker build
+├── docker-compose.yml         # Development environment
+├── docker-compose.prod.yml    # Production environment
+└── package.json               # Dependencies and scripts
 ```
 
 ## Prerequisites
 
-- Docker (version 20.10 or higher)
-- Docker Compose (version 2.0 or higher)
+- **Node.js 20+** (for local development)
+- **Docker & Docker Compose** (for containerized deployment)
 
 ## Getting Started
 
-### Development Environment
+### Local Development (Without Docker)
 
-1. Copy the example environment file:
+1. **Install dependencies:**
    ```bash
-   cp .env.development.example .env.development
+   npm install
    ```
 
-2. Start the development environment:
+2. **Set up environment variables:**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+3. **Create database directory:**
+   ```bash
+   mkdir -p data
+   ```
+
+4. **Run database migrations:**
+   ```bash
+   npm run db:migrate
+   ```
+
+5. **Start development server:**
    ```bash
    npm run dev
    ```
 
-   Or build and start:
+6. **Access the application:**
+   - Application: http://localhost:3000
+   - API: http://localhost:3000/api/health
+
+### Docker Development Environment
+
+1. **Start development container:**
    ```bash
-   npm run dev:build
+   npm run docker:dev
+   # or with build
+   npm run docker:dev:build
    ```
 
-3. Access the application:
-   - Frontend: http://localhost:5174
-   - Backend API: http://localhost:3002
+2. **Access the application:**
+   - Application: http://localhost:3000
 
-### Production Environment
+### Docker Production Environment
 
-1. Copy the example environment file:
+1. **Build production image:**
    ```bash
-   cp .env.production.example .env.production
+   npm run docker:prod:build
    ```
 
-2. Update the `.env.production` file with your production settings.
-
-3. Build the production images:
+2. **Start production container:**
    ```bash
-   npm run prod:build
+   npm run docker:prod:up
    ```
 
-4. Start the production environment:
-   ```bash
-   npm run prod:up
-   ```
-
-5. Access the application at http://localhost
+3. **Access the application:**
+   - Application: http://localhost:3000
 
 ## Available Scripts
 
 ### Development
-- `npm run dev` - Start development environment
-- `npm run dev:build` - Build and start development environment
-- `npm run dev:down` - Stop development environment
-- `npm run dev:clean` - Stop and remove volumes
+- `npm run dev` - Start Next.js development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-### Production
-- `npm run prod:build` - Build production images
-- `npm run prod:up` - Start production environment
-- `npm run prod:down` - Stop production environment
-- `npm run prod:logs` - View production logs
+### Database
+- `npm run db:generate` - Generate Drizzle migrations
+- `npm run db:migrate` - Run database migrations
+- `npm run db:push` - Push schema changes directly
+- `npm run db:studio` - Open Drizzle Studio (database GUI)
 
-### Logs
-- `npm run logs` - View all container logs
-- `npm run logs:backend` - View backend logs only
-- `npm run logs:frontend` - View frontend logs only
+### Docker
+- `npm run docker:dev` - Start development container
+- `npm run docker:dev:build` - Build and start development container
+- `npm run docker:prod:build` - Build production image
+- `npm run docker:prod:up` - Start production container
 
 ## Environment Variables
 
-See `.env.example`, `.env.development.example`, and `.env.production.example` for required environment variables.
+Create a `.env.local` file for local development:
+
+```env
+NODE_ENV=development
+DATABASE_URL=file:./data/app.db
+
+# Feature Flags
+ENABLE_ENHANCED_OPTIMIZATION=true
+ENABLE_PRESENT_VALUE=true
+ENABLE_PROJECTIONS=true
+
+# Calculation Defaults
+DEFAULT_DISCOUNT_RATE=0.03
+PV_CALCULATION_PRECISION=2
+ALTERNATIVE_STRATEGY_THRESHOLD=0.02
+```
+
+## API Endpoints
+
+### Health Check
+- `GET /api/health` - Service health status
+
+### Calculations
+- `POST /api/calculate/individual` - Individual calculation
+- `POST /api/calculate/couple` - Couple calculation
+- `POST /api/calculate/enhanced/individual` - Enhanced individual calculation
+- `POST /api/calculate/enhanced/couple` - Enhanced couple calculation
+
+See `API.md` for detailed API documentation.
 
 ## Docker Configuration
 
 ### Development Mode
-- Hot reloading enabled for both frontend and backend
+- Hot reloading enabled
 - Source code mounted as volumes
-- Debug logging enabled
+- SQLite database persisted in `./data`
+- Runs on port 3000
 
 ### Production Mode
-- Multi-stage builds for optimized image sizes
-- No volume mounts
-- Health checks enabled
+- Multi-stage build for minimal image size
+- Standalone Next.js build
+- SQLite database persisted in volume
+- Runs as non-root user (nextjs:nodejs)
 - Resource limits configured
-- Runs as non-root user
+- Runs on port 3000
+
+## Database Management
+
+The application uses SQLite with Drizzle ORM for data persistence.
+
+### View Database
+```bash
+npm run db:studio
+```
+
+### Create New Migration
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+### Backup Database
+```bash
+cp data/app.db data/app.db.backup
+```
 
 ## Health Checks
 

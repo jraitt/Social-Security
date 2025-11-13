@@ -1,52 +1,28 @@
 version: '3.8'
 
 services:
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       target: production
-    container_name: ssc-backend-prod
-    environment:
-      - NODE_ENV=production
-    env_file:
-      - .env.production
-    restart: always
-    networks:
-      - ssc-network
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 512M
-        reservations:
-          cpus: '0.5'
-          memory: 256M
-
-  frontend:
-    build:
-      context: ./frontend
-      target: production
-    container_name: ssc-frontend-prod
+    container_name: ssc-nextjs-prod
     ports:
-      - "80:80"
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data  # Persist database
     environment:
       - NODE_ENV=production
-    env_file:
-      - .env.production
-    depends_on:
-      - backend
-    restart: always
-    networks:
-      - ssc-network
+      - DATABASE_URL=file:./data/app.db
+      - ENABLE_ENHANCED_OPTIMIZATION=true
+      - ENABLE_PRESENT_VALUE=true
+      - ENABLE_PROJECTIONS=true
+      - DEFAULT_DISCOUNT_RATE=0.03
+    restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
+          cpus: '1.5'
+          memory: 1G
         reservations:
-          cpus: '0.25'
-          memory: 128M
-
-networks:
-  ssc-network:
-    driver: bridge
+          cpus: '0.5'
+          memory: 512M

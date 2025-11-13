@@ -1,26 +1,66 @@
 {
   "name": "social-security-calculator",
-  "version": "1.0.0",
-  "description": "Social Security Benefits Calculator with Docker deployment",
+  "version": "2.0.0",
+  "description": "Social Security Benefits Calculator - Next.js Full-Stack App",
+  "private": true,
   "scripts": {
-    "dev": "docker-compose up",
-    "dev:build": "docker-compose up --build",
-    "dev:down": "docker-compose down",
-    "dev:clean": "docker-compose down -v",
-    "prod:build": "docker-compose -f docker-compose.prod.yml build",
-    "prod:up": "docker-compose -f docker-compose.prod.yml up -d",
-    "prod:down": "docker-compose -f docker-compose.prod.yml down",
-    "prod:logs": "docker-compose -f docker-compose.prod.yml logs -f",
-    "logs": "docker-compose logs -f",
-    "logs:backend": "docker-compose logs -f backend",
-    "logs:frontend": "docker-compose logs -f frontend"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate:sqlite",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:push": "drizzle-kit push:sqlite",
+    "db:studio": "drizzle-kit studio",
+    "docker:dev": "docker-compose up",
+    "docker:dev:build": "docker-compose up --build",
+    "docker:prod:build": "docker-compose -f docker-compose.prod.yml build",
+    "docker:prod:up": "docker-compose -f docker-compose.prod.yml up -d"
   },
   "keywords": [
     "social-security",
     "calculator",
     "retirement",
+    "nextjs",
     "docker"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "drizzle-orm": "^0.30.0",
+    "better-sqlite3": "^9.4.0",
+    "recharts": "^2.12.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.0",
+    "lucide-react": "^0.363.0",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-accordion": "^1.1.2",
+    "@radix-ui/react-select": "^2.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@types/better-sqlite3": "^7.6.9",
+    "typescript": "^5.3.0",
+    "drizzle-kit": "^0.20.0",
+    "tsx": "^4.7.0",
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.2.0",
+    "prettier": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

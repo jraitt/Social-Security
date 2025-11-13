@@ -1,45 +1,23 @@
 version: '3.8'
 
 services:
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       target: development
-    container_name: ssc-backend-dev
+    container_name: ssc-nextjs-dev
     ports:
-      - "3002:3002"
+      - "3000:3000"
     volumes:
-      - ./backend:/app
+      - .:/app
       - /app/node_modules
+      - /app/.next
+      - ./data:/app/data  # SQLite database persistence
     environment:
       - NODE_ENV=development
-    env_file:
-      - .env.development
+      - DATABASE_URL=file:./data/app.db
+      - ENABLE_ENHANCED_OPTIMIZATION=true
+      - ENABLE_PRESENT_VALUE=true
+      - ENABLE_PROJECTIONS=true
+      - DEFAULT_DISCOUNT_RATE=0.03
     restart: unless-stopped
-    networks:
-      - ssc-network
-
-  frontend:
-    build:
-      context: ./frontend
-      target: build
-    container_name: ssc-frontend-dev
-    ports:
-      - "5174:5174"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-    env_file:
-      - .env.development
-    command: npm run dev -- --host 0.0.0.0
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - ssc-network
-
-networks:
-  ssc-network:
-    driver: bridge
